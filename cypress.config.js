@@ -6,7 +6,7 @@ module.exports = defineConfig({
     viewportHeight: 860, 
     viewportWidth: 410,
   e2e: {
-    baseUrl: "https://cac-tat.s3.eu-central-1.amazonaws.com/index.html",
+    baseUrl: 'http://localhost:61566/__/#/specs/runner?file=cypress/e2e/suites_de_teste/_suite_de_testes.cy.js'
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
