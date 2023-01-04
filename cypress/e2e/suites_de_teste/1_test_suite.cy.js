@@ -1,4 +1,5 @@
 describe('Central de Atendimento ao Cliente TAT', function() {
+  const THREE_SECONDS_IN_MS = 3000 
   beforeEach(function() {
     cy.visit('./src/index.html')
   })
@@ -7,6 +8,9 @@ describe('Central de Atendimento ao Cliente TAT', function() {
 })
   it('preenche os campos obrigatórios e envia o formulário', function() {
     const longText = 'Aqui está o texto super super longo que eu quero escrever nesta caixa de mensagens'
+
+    cy.clock()
+
     cy.get('#firstName').type('Marcelo')
     cy.get('#lastName').type('Costa')
     cy.get('#email').type('marceloadsc@gmail.com')
@@ -14,24 +18,36 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.contains('button', 'Enviar').click()
     //assertion:
     cy.get('.success').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.success').should('not.be.visible')
   })
-  it('exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', function() {
+  it.only('exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', function() {
+    cy.clock()
+
     cy.get('#email').type('marceloadsasdasdsad,com')
     cy.contains('button', 'Enviar').click()
     //assertion:
     cy.get('.error').should('be.visible')
+
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.error').should('not.be.visible')
   })
   it('campo de telefone continua vazio quando preenchido com valor não-númerico', function() {
     cy.get('#phone').type('teste teste teste teste')
     cy.contains('button', 'Enviar').click().should('have.value', '')
   })
-  it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function() {
+  it.only('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function() {
+    cy.clock()
     cy.get('#firstName').type('Marcelo')
     cy.get('#lastName').type('Costa')
     cy.get('#email').type('marceloadsc@gmail.com')
     cy.get('#phone-checkbox').last().check()
     cy.contains('button', 'Enviar').click()
     cy.get('.error').should('be.visible')
+
+    cy.tick(THREE_SECONDS_IN_MS)
+
+    cy.get('.error').should('not.be.visible')
   })
   it('preenche e limpa os campos nome, sobrenome, email e telefone', function() {
     const  
