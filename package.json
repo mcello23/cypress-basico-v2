@@ -7,7 +7,7 @@
     "cypress:open": "cypress open --config-file=cypress.config.js",
     "cy:open": "cypress open",
     "cy:opn:mobile": "cypress open --config viewportWidth=410 viewportHeight=860",
-    "test": "cypress run",
+    "test": "cypress run --config-file=cypress.config.js",
     "test:mobile": "cypress open --config viewportWidth=410 viewportHeight=860"
   },
   "repository": {
