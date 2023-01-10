@@ -11,9 +11,9 @@ describe('Central de Atendimento ao Cliente TAT', function() {
 
     cy.clock()
 
-    cy.get('#firstName').type('Marcelo')
-    cy.get('#lastName').type('Costa')
-    cy.get('#email').type('marceloadsc@gmail.com')
+    cy.get('#firstName').type('João')
+    cy.get('#lastName').type('Neves')
+    cy.get('#email').type('johnsnow@gmail.com')
     cy.get('#open-text-area').type(longText)
     cy.contains('button', 'Enviar').click()
     //assertion:
@@ -38,9 +38,9 @@ describe('Central de Atendimento ao Cliente TAT', function() {
   })
   it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function() {
     cy.clock()
-    cy.get('#firstName').type('Marcelo')
-    cy.get('#lastName').type('Costa')
-    cy.get('#email').type('marceloadsc@gmail.com')
+    cy.get('#firstName').type('João')
+    cy.get('#lastName').type('Neves')
+    cy.get('#email').type('johnsnow@gmail.com')
     cy.get('#phone-checkbox').last().check()
     cy.contains('button', 'Enviar').click()
     cy.get('.error').should('be.visible')
@@ -51,10 +51,10 @@ describe('Central de Atendimento ao Cliente TAT', function() {
   })
   it('preenche e limpa os campos nome, sobrenome, email e telefone', function() {
     const  
-    firstName = 'Marcelo',
-    secondName = 'Costa',
-    email = 'marceloadsc@gmail.com',
-    phone = '654524283'
+    firstName = 'João',
+    secondName = 'Neves',
+    email = 'johnsnow@gmail.com',
+    phone = '655555555'
 
     cy.get('#firstName').type(firstName).should('have.value', firstName).clear().should('have.value', '')
     cy.get('#lastName').type(secondName).should('have.value', secondName).clear().should('have.value', '')
