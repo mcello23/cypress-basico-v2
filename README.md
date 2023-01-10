@@ -2,6 +2,8 @@
 
 Sample project for the basic course of the Talking About Testing.
 
+The test suite is made entirely following TAT course, a bit more updated to Cypress 10.0.
+
 ## Pre-requirements
 
 It is required to have Node.js and npm installed to run this project.
@@ -27,11 +29,3 @@ Or, run `npm run cy:open` to open Cypress in interactive mode on a desktop viewp
 Run `npm run test:mobile` to run the test in headless mode on a mobile viewport.
 
 Or, run `npm run cy:open` to open Cypress in interactive mode on a mobile viewport.
-
-## Support this project
-
-If you want to support this project, leave a ⭐.
-
-___
-
-This project was created with 💚 by [Walmyr](https://walmyr.dev).
