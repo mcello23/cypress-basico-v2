@@ -6,7 +6,9 @@
   "baseUrl": "http://localhost:3000",
   "scripts": {
     "cy:open": "cypress open",
-    "test": "cypress run"
+    "test": "cypress run",
+    "cy:open:mobile": "cypress open --config viewportWidth=410 viewportHeight=860",
+    "test:mobile": "cypress open --config viewportWidth=410 viewportHeight=860"
   },
   "repository": {
     "type": "git",

@@ -2,8 +2,8 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
     projectId: '5m2roh',
-    viewportHeight: 880,
-    viewportWidth: 1280,
+    viewportHeight: 880, //667, 880
+    viewportWidth: 1280, //375, 1280
     chromeWebSecurity: false,
   e2e: {
     setupNodeEvents(on, config) {

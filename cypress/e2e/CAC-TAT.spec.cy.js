@@ -131,11 +131,61 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.wait(1000)
     cy.get('input[type="checkbox"]').check().last().uncheck().should('not.be.checked')
   })
-  it.only('[Checkboxes] Exibe mesnagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio', function() {
+  it('[Checkboxes] Exibe mesnagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio', function() {
     // Sou foda :)
     cy.get('#phone-checkbox').check()
     cy.wait(1000)
     cy.contains('button', 'Enviar').click()
     cy.get('.error').should('be.visible')
+  })
+  it('[Upload][Select file] Seleciona um arquivo da pasta fixtures', function(){
+    // O get ve o elemento do botão de fazer upload, o should valida que não tem nada nele
+    // Logo, o selectFile faz o upload do arquivo dessa pasta que ta no fixtures, o json
+    // Daí, criamos uma função de call back que valida que o arquivo que você fez o upload realmente subiu 
+    cy.get('input[type="file"]#file-upload')
+    .should('not.have.value')
+    .selectFile('cypress/fixtures/example.json')
+    .should(function($input){
+      expect($input[0].files[0].name).to.equal('example.json')
+    })
+  })
+  it('[Upload][Select File][Drag and drop] Simulando drag-and-drop', function(){
+    // Esse aqui é a mesma coisa mas tem o action que simula um drag and drop (arrastar) um arquivo
+    cy.get('input[type="file"]#file-upload')
+    .should('not.have.value')
+    .selectFile('cypress/fixtures/example.json', { action: 'drag-drop'})
+    .should(function($input){
+      expect($input[0].files[0].name).to.equal('example.json')
+    })
+  })
+  it('[Upload][Select File] Fazendo upload com uma fixture com um alias', function(){
+    // Aqui o que muda é usar o cy.fixture que já chama o arquivo diretamente da pasta fixture
+    // E coloca um alias nele, no caso arquivoExemplo
+    // Você então chama ele com @ no selectFile e faz a validação
+    cy.fixture('example.json').as('arquivoExemplo')
+    cy.get('input[type="file"]#file-upload')
+    .selectFile('@arquivoExemplo')
+    .should(function($input){
+      expect($input[0].files[0].name).to.equal('example.json')
+    })
+  })
+  it('[Abrir link] Abre e política de privcidade abre em outra aba sem necessidade de click', function(){
+    //Como a funcionalidade de abrir uma nova aba vem do "target=_blank" que está inserido no HTML
+    // Aqui tem uma forma de contornar isso, validando o link na mesma aba
+    cy.get('#privacy a').should('have.attr', 'target', '_blank')
+  })
+  it('Acessa a página da política de privacidade removendo o target e então clicando no link', function(){
+  // IMPORTANTISSIMO: para abrir uma página na mesma aba do Cypress, usar o
+  // .invoke('removeAttr', target) e dai fazer um clique
+    cy.get('#privacy a')
+      .invoke('removeAttr', 'target')
+      .click()
+    cy.contains('Talking About Testing').should('be.visible')
+  })
+  it('Testa a página da política de privacidade de forma independente', function(){
+  // Isso aqui deveria estar em outro spec na real...
+  // Mas assim também funciona
+    cy.visit('/src/privacy.html')
+    cy.contains('Talking About Testing').should('be.visible')
   })
 })
