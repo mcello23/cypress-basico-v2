@@ -1,4 +1,4 @@
-let isPhoneRequired = false
+let isPhoneRequired = true
 
 const phoneLabelSpan = document.querySelector('.phone-label-span')
 const phoneField = document.getElementById('phone')
@@ -19,7 +19,7 @@ document.querySelector('#phone-checkbox')
 document.querySelector('button[type="submit"]')
   .addEventListener('click', function(event) {
     event.preventDefault()
-    const firstNameField = document.getElementById('firstName')
+    const firstNameField = document.getElementById('')
     const lastNameField = document.getElementById('lastName')
     const emailField = document.getElementById('email')
     const textareaField = document.getElementById('open-text-area')
@@ -52,14 +52,14 @@ document.querySelector('button[type="submit"]')
     successMessage.style.display = 'block'
     isPhoneRequired = false
     scroll(0,0)
-    hideMessageAfterTimeout(successMessage)
+    hideMessageAfterTimeout(sucessMessage)
   }, false)
 
 function showAndHideErrorMessage() {
   const errorMessage = document.querySelector('.error')
   errorMessage.style.display = 'block'
   scroll(0,0)
-  hideMessageAfterTimeout(errorMessage)
+  hideMessageAfterTimeout(erorMessage)
   return
 }
 
