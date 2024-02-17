@@ -10,6 +10,14 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     // Lembrando que a função .type('texto', {delay: 0}) vem para ajudar a escrever algo mais rápido ou mais depressa
     // Ou seja, delay: 0 sería o mais rápido possível, fazendo o cypress sobreescrever o delay padrão que é 10
     // Se você colocar delay: 110 como abaixo é possível 'simular' uma pessoa escrevendo
+    // Classe 11: uso do cy.clock() e cy.click() usados posteriormente
+    // Basicamente o cy.clock() congela o clock to browser, fazendo a mensagem de erro sempre aparecer
+    // Depois, em conjunto com o cy.tick(), avançamos 3 segundos pra mensagem  desaparecer
+    // Aí, valida que a mensagem já não está
+    // Isso tudo pq? Pra fazer o teste rodar mais rápido, ao invés de 3 segundos, roda em 1 segundo
+    // Lembrando que implementei o cy.clock em vários testes a partir deste
+    // O cy.clock é interessante usar quando vemos mensagens exibidas na tela, de erro, falta uma informação no formulário, etc
+    cy.clock()
     cy.get('#firstName').should('be.visible')
       .type('Marcelo', {delay: 110}).should('have.value', 'Marcelo')
     cy.get('#lastName').should('be.visible')
@@ -20,10 +28,13 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('#open-text-area').click().type('Reset da senha', {delay: 110})
     cy.contains('button', 'Enviar').should('be.visible').click()
     cy.get('.success').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.success').should('not.be.visible')
   })
   it('Valida que exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', function() {
     // Aqui uso seria um teste negativo, no qual um valido que a mensagem de erro aparece quando coloco um e-mail de formato invalido
     // Assert: na classe da mensagem de erro 
+    cy.clock()
     cy.get('#firstName').should('be.visible')
     .type('Marcelo').should('have.value', 'Marcelo')
     cy.get('#lastName').should('be.visible')
@@ -33,14 +44,37 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('#open-text-area').click().type('Comentário', {delay: 0})
     cy.contains('button', 'Enviar').should('be.visible').click()
     cy.get('.error>strong').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.error').should('not.be.visible')
   })
   it('Valida que o campo telefone continua vazio quando preenchido com valor não-numérico', function() {
     // O legal aqui é que a validação é uma string vazia com o ''
     // O campo de telefone só aceita números e digitamos texto
     cy.get('#phone').type('meu telefone').should('have.value', '')
   })
+  Cypress._.times(10, function(){
+    // Isso aqui é o lodash, que é o ._.
+    // Vc tem o repeat, e o times, no times vc coloca quntas vezes quer repetir o teste e a função de callback
+    it('[Negative] Clicar na forma de contato telefone, e não preencher o telefone, valido que a mensagem de erro se exibe', function() {
+      // Teste negativo, clico em Telefone em contato preferencial, não coloco telefone e tento dar submit
+      cy.clock()
+      cy.get('#firstName')
+          .type('Marcelo')
+      cy.get('#lastName').should('be.visible')
+        .type('Costa')
+      cy.get('#email').should('be.visible')
+        .type('marceloadsc@gmail.com')
+      cy.get('#phone-checkbox').check()
+      cy.get('#open-text-area').click().type('Test', {delay: 0})
+      cy.contains('button', 'Enviar').click();
+      cy.get('.error').should('be.visible')
+      cy.tick(THREE_SECONDS_IN_MS)
+      cy.get('.error').should('not.be.visible')
+    })
+  })
   it('[Negative] Clicar na forma de contato telefone, e não preencher o telefone, valido que a mensagem de erro se exibe', function() {
     // Teste negativo, clico em Telefone em contato preferencial, não coloco telefone e tento dar submit
+    cy.clock()
     cy.get('#firstName')
         .type('Marcelo')
     cy.get('#lastName').should('be.visible')
@@ -51,6 +85,8 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('#open-text-area').click().type('Test', {delay: 0})
     cy.contains('button', 'Enviar').click();
     cy.get('.error').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.error').should('not.be.visible')
   })
   it('[Negative] Validando que se pode preencher e apagar inputs', function() {
     // Teste negativo, faço input de textos, limpo e valido que todos passaram
@@ -65,16 +101,22 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('.error').should('be.visible')
   })
   it('[Negative] Validando que se vejo a mensagem de erro sem preencher nada', function() {
+    cy.clock()
     cy.get('button[type="submit"]').click()
     cy.get('.error').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.error').should('not.be.visible')
   })
   it('envia o formulário com sucesso usando um comando customizado', function() {
     // O legal aqui é que um comando só dentro de commands.js está fazendo tudo, todos os passos
     // Lembrando que dá pra criar quantos commands.js quiser, basta importar dentro de index.js
+    cy.clock()
     cy.fillMandatoryFieldsAndSubmit()
     cy.get('.success').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.success').should('not.be.visible')
   })
-   // Mudei num exercicio que não está aqui:
+  // Mudei num exercicio que não está aqui:
   // cy.get('button[type="submit"]').click() para cy.contains('button', 'Enviar')
   // Fiz uma refatoração (refactoring), que significa mudar a estrutura do código sin cambiar su funcionamento
   // Podemos no tener un selector no muy especifico, y podemos utilizar un cy.contains para buscar elementos de texto al inves de cy.get
@@ -187,5 +229,41 @@ describe('Central de Atendimento ao Cliente TAT', function() {
   // Mas assim também funciona
     cy.visit('/src/privacy.html')
     cy.contains('Talking About Testing').should('be.visible')
+  })
+  it('exibe e esconde as mensagens de sucesso e erro usando o .invoke', () => {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Mensagem enviada com sucesso.')
+      .invoke('hide')
+      .should('not.be.visible')
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Valide os campos obrigatórios!')
+      .invoke('hide')
+      .should('not.be.visible')
+  })
+  it(`preenche a area de texto usando o comando invoke`, function(){
+    // Esse teste é interessantissimo pq você usa o invoke chamando o valor com .invoke('val') do id que faz o get!
+    // Logo, você adiciona a constante que criou, e valida que essa constante tem o valor que você passou
+    const longText = Cypress._.repeat('0123456789', 20)
+    cy.get('#open-text-area').invoke('val', longText).should('have.value', longText)
+  })
+
+it('[API]Fazendo uma requisição HTTP', function(){
+  // Legal, dá pra fazer teste de api dentro do Cypress
+  cy.request('https://cac-tat.s3.eu-central-1.amazonaws.com/index.html')
+  .should(function(response) {
+    const { status, statusText, body } = response
+    expect(status).to.equal(200)
+    expect(statusText).to.equal('OK')
+    expect(body).to.include('CAC TAT')
+    })
+  })
+  it('Encontrando o gato escondido', function(){
+    cy.get('#cat').invoke('show').should('be.visible')
   })
 })
